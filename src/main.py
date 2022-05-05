@@ -1,5 +1,7 @@
 import os
 import typing
+from hazm import *
+import time
 
 class TranslationDictionary:
     counter = 0
@@ -27,23 +29,57 @@ class TranslationDictionary:
         else:
             print("Not a Valid Language")
 
+
+    # @classmethod
+    # def dotElimination(self, englishTokens, farsiTokens):
+    #     for values in englishTokens:
+    #         if values == ".":
+    #             pass
+    #             # Do Nothing
+    #         else:
+    #             pass
+
+
+
     def preProcess(self, listOfEnglishSentences, listOfFarsiSentences):
         dictionary: dict = {}
-        for outer_index, outer_words in enumerate(listOfEnglishSentences):
-            for inner_index, inner_words in enumerate(listOfFarsiSentences):
-                if outer_words + "-" + inner_words not in dictionary.keys():
-                    # print( outer_words + "<-> " + inner_words)
-                    # print(inner_words)
-                    dictionary[outer_words + "-" + inner_words] = 1
-                else:
-                    dictionary[outer_words + "-" + inner_words] += 1
+        englishTokens: list = []
+        farsiTokens:list = []
 
+
+        for english_index, english_sentence  in enumerate(listOfEnglishSentences):
+            listOfEnglishWords = english_sentence.split()
+            englishTokens.append(listOfEnglishWords)
+
+        for farsi_index, farsi_sentence in enumerate(listOfFarsiSentences):
+            listOfFarsiWords = word_tokenize(farsi_sentence) #hazm is used here
+            farsiTokens.append(listOfFarsiWords)
+
+
+        # print(farsiTokens)
+        # print(englishTokens)
+
+        for word_index, word in enumerate(englishTokens):
+            indexNo = englishTokens[word_index].index(".")
+            del englishTokens[word_index][indexNo]
+            indexNo = farsiTokens[word_index].index(".")
+            del farsiTokens[word_index][indexNo]
+            
+            for outer_index, outer_value in enumerate(englishTokens[word_index]):
+                for inner_index, inner_value in enumerate(farsiTokens[word_index]):
+                    if outer_value + "-" + inner_value not in dictionary.keys():
+                        dictionary[outer_value + "-" + inner_value] = 1
+                    else:
+                        dictionary[outer_value + "-" + inner_value] += 1
+
+                    print(dictionary.values())
+                    print(dictionary.keys())
+                    # time.sleep(1.0)
 
 
 if __name__ == '__main__':
     translationDic = TranslationDictionary()
     listOfFarsiSentences = translationDic.readFiles("Farsi")
-    print(listOfFarsiSentences)
     listOfEnglishSentences = translationDic.readFiles("English")
-    # translationDic.preProcess(listOfEnglishSentences, listOfFarsiSentences)
+    translationDic.preProcess(listOfEnglishSentences, listOfFarsiSentences)
 
