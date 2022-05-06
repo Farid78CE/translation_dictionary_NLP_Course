@@ -45,26 +45,75 @@ class TranslationDictionary:
         dictionary: dict = {}
         englishTokens: list = []
         farsiTokens:list = []
+        englishWordsFrequencies:dict = {}
+        farsiWordsFrequencies: dict = {}
 
 
         for english_index, english_sentence  in enumerate(listOfEnglishSentences):
             listOfEnglishWords = english_sentence.split()
             englishTokens.append(listOfEnglishWords)
+            for eachWord in listOfEnglishWords:
+                if eachWord not in englishWordsFrequencies.keys():
+                    englishWordsFrequencies[eachWord] = 1
+                else:
+                    englishWordsFrequencies[eachWord] += 1
+
+
 
         for farsi_index, farsi_sentence in enumerate(listOfFarsiSentences):
             listOfFarsiWords = word_tokenize(farsi_sentence) #hazm is used here
             farsiTokens.append(listOfFarsiWords)
+            for eachWord in listOfFarsiWords:
+                if eachWord not in farsiWordsFrequencies.keys():
+                    farsiWordsFrequencies[eachWord] = 1
+                else:
+                    farsiWordsFrequencies[eachWord] += 1
 
+        farsiFile = open(os.getcwd() + "\\farsiFrequencyOutPut.txt", "w", encoding="utf8")
+        farsiFile.write(str(farsiWordsFrequencies))
+        farsiFile.close()
+
+        englishFile = open(os.getcwd() + "\\ englishFrequencyOutPut.txt", "w", encoding="utf8")
+        englishFile.write(str(englishWordsFrequencies))
+        englishFile.close()
+
+        # print(farsiWordsFrequencies)
+        # print(englishWordsFrequencies)
 
         # print(farsiTokens)
         # print(englishTokens)
 
         for word_index, word in enumerate(englishTokens):
-            indexNo = englishTokens[word_index].index(".")
-            del englishTokens[word_index][indexNo]
-            indexNo = farsiTokens[word_index].index(".")
-            del farsiTokens[word_index][indexNo]
-            
+            try:
+                indexNo = englishTokens[word_index].index(".")
+                del englishTokens[word_index][indexNo]
+            except Exception as e:
+                # print("[-] Our Exception is :\n---->"+ str(e))
+                continue
+
+            try:
+                indexNo = farsiTokens[word_index].index(".")
+                del farsiTokens[word_index][indexNo]
+            except Exception as e:
+                # print("[-] Our Exception is :\n---->" + str(e))
+                continue
+
+            try:
+                indexNo = englishTokens[word_index].index("?")
+                del englishTokens[word_index][indexNo]
+            except Exception as e:
+                # print("[-] Our Exception is :\n---->" + str(e))
+                continue
+
+            try:
+                indexNo = farsiTokens[word_index].index("?")
+                del farsiTokens[word_index][indexNo]
+            except Exception as e:
+                # print("[-] Our Exception is :\n---->" + str(e))
+                continue
+
+
+
             for outer_index, outer_value in enumerate(englishTokens[word_index]):
                 for inner_index, inner_value in enumerate(farsiTokens[word_index]):
                     if outer_value + "-" + inner_value not in dictionary.keys():
@@ -72,8 +121,8 @@ class TranslationDictionary:
                     else:
                         dictionary[outer_value + "-" + inner_value] += 1
 
-                    print(dictionary.values())
-                    print(dictionary.keys())
+                    # print(dictionary.values())
+                    # print(dictionary.keys())
                     # time.sleep(1.0)
 
 
