@@ -2,8 +2,8 @@ import os
 import typing
 from hazm import *
 import time
-# Farid Zaredar
-# Unive
+# Farid Zaredar 97463130
+# University Of Zanjan 
 class TranslationDictionary:
     counter = 0
     flag = False
